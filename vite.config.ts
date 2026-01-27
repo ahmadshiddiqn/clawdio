@@ -5,5 +5,10 @@ export default defineConfig({
   plugins: [sveltekit()],
   ssr: {
     noExternal: ['three', '@threlte/core', '@threlte/extras']
+  },
+  server: {
+    fs: {
+      allow: ['/home/opc/clawdio', '/workspace']
+    }
   }
 });
