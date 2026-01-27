@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T, useFrame } from '@threlte/core';
+  import { T, useTask } from '@threlte/core';
   import { ContactShadows, Float, Grid, OrbitControls } from '@threlte/extras';
   import Face from './Face.svelte';
   import type { AnimationState } from './Animations';
@@ -8,6 +8,14 @@
   export let onPoke: () => void = () => {};
 
   let autoRotate = true;
+  let rotationY = 0;
+  let rotationX = 0;
+
+  useTask((delta) => {
+    if (autoRotate) {
+      rotationY += delta * 0.1;
+    }
+  });
 </script>
 
 <T.PerspectiveCamera

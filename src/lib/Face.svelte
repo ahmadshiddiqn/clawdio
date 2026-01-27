@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T, useFrame } from '@threlte/core';
+  import { T, useTask } from '@threlte/core';
   import { spring } from 'svelte/motion';
   import type { AnimationState } from './Animations';
 
@@ -116,7 +116,7 @@
     }
   }
 
-  useFrame((_, delta) => {
+  useTask((delta) => {
     time += delta;
 
     if (state === 'idle') {
