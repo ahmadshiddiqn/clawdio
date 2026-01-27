@@ -97,7 +97,7 @@
 
   <div class="canvas-wrapper">
     <Canvas>
-      <Scene {state={animationState} onPoke={handlePoke} />
+      <Scene state={animationState} onPoke={handlePoke} />
     </Canvas>
   </div>
 
