@@ -1,10 +1,8 @@
 <script lang="ts">
-  import { Canvas } from '@threlte/core';
   import { onMount } from 'svelte';
-  import Scene from '$lib/Scene.svelte';
   import type { AnimationState } from '$lib/Animations';
 
-  const API_URL = import.meta.env.VITE_DIO_STATUS_URL || '/api/dio-status';
+  const API_URL = 'http://clawdbot-vnic.tail5b53bc.ts.net:8080/api/dio-status' || '/api/dio-status';
 
   let animationState: AnimationState = 'idle';
   let statusInfo: any = null;
@@ -12,6 +10,9 @@
   let clickCount = 0;
   let secretClicks = 0;
   let showSecret = false;
+  let Canvas: any;
+  let Scene: any;
+  let sceneLoaded = false;
 
   const statusLabels: Record<AnimationState, { text: string; emoji: string }> = {
     idle: { text: 'Idle / Boring', emoji: '💤' },
@@ -28,9 +29,8 @@
       if (res.ok) {
         statusInfo = await res.json();
 
-        // Map API status to animation state
         if (statusInfo.state === 'sleeping') {
-          animationState = 'idle'; // Could use 'sleepy' with eyes closed
+          animationState = 'idle';
         } else if (statusInfo.state === 'thinking') {
           animationState = 'bored';
         } else if (statusInfo.state === 'active') {
@@ -48,7 +48,6 @@
     clickCount++;
     secretClicks++;
 
-    // Easter egg: 7 clicks in quick succession
     if (secretClicks === 7) {
       animationState = 'excited';
       showSecret = true;
@@ -63,7 +62,6 @@
     animationState = 'surprised';
 
     if (clickCount % 5 === 0) {
-      // Special celebration
       setTimeout(() => {
         animationState = 'excited';
         setTimeout(() => {
@@ -81,7 +79,13 @@
   }
 
   let pollInterval: ReturnType<typeof setInterval>;
-  onMount(() => {
+  onMount(async () => {
+    const threlte = await import('@threlte/core');
+    Canvas = threlte.Canvas;
+    const sceneModule = await import('$lib/Scene.svelte');
+    Scene = sceneModule.default;
+    sceneLoaded = true;
+
     fetchStatus();
     pollInterval = setInterval(fetchStatus, 10000);
     return () => { if (pollInterval) clearInterval(pollInterval); };
@@ -96,9 +100,11 @@
   {/if}
 
   <div class="canvas-wrapper">
-    <Canvas>
-      <Scene state={animationState} onPoke={handlePoke} />
-    </Canvas>
+    {#if sceneLoaded && Canvas && Scene}
+      <svelte:component this={Canvas}>
+        <svelte:component this={Scene} state={animationState} onPoke={handlePoke} />
+      </svelte:component>
+    {/if}
   </div>
 
   <div class="ui-overlay">

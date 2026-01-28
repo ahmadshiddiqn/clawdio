@@ -4,7 +4,13 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [sveltekit()],
   ssr: {
-    noExternal: ['three', '@threlte/core', '@threlte/extras']
+    noExternal: [],
+    external: ['three', '@threlte/core', '@threlte/extras']
+  },
+  resolve: {
+    alias: {
+      'three/examples/jsm/objects/GroundedSkybox.js': './src/lib/GroundedSkybox Shim.js'
+    }
   },
   server: {
     fs: {
